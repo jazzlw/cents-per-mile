@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cents Per Mile</title>
+<meta name="description" content="Compare what a mile costs in EVs and gas cars at fuel prices you set.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Fuel cost calculator &middot; EPA combined ratings</div>
+    <h1>Cents <span class="sep">/</span> Mile</h1>
+    <p class="standfirst">Set what you actually pay for gas and electricity, and see what every mile costs in each car. Electricity is measured at the wall, so charging losses are already in the number.</p>
+  </header>
+
+  <section class="board" aria-label="Fuel prices">
+    <div class="card meter" data-fuel="gas">
+      <div class="meter-top"></div>
+      <div class="meter-body">
+        <div class="meter-head">
+          <span class="meter-name">Gasoline</span>
+          <span class="meter-unit">dollars / gallon</span>
+        </div>
+        <div class="readout">
+          <span class="cur">$</span>
+          <input id="gasPrice" type="number" min="0" max="9" step="0.01" value="3.20"
+                 inputmode="decimal" aria-label="Gas price in dollars per gallon">
+        </div>
+        <input id="gasRange" type="range" min="1.5" max="7" step="0.01" value="3.20"
+               aria-label="Gas price slider">
+        <div class="presets" id="gasPresets"></div>
+      </div>
+    </div>
+
+    <div class="card meter" data-fuel="ev">
+      <div class="meter-top"></div>
+      <div class="meter-body">
+        <div class="meter-head">
+          <span class="meter-name">Electricity</span>
+          <span class="meter-unit">dollars / kWh</span>
+        </div>
+        <div class="readout">
+          <span class="cur">$</span>
+          <input id="kwhPrice" type="number" min="0" max="1" step="0.001" value="0.170"
+                 inputmode="decimal" aria-label="Electricity price in dollars per kilowatt-hour">
+        </div>
+        <input id="kwhRange" type="range" min="0" max="0.6" step="0.005" value="0.170"
+               aria-label="Electricity price slider">
+        <div class="presets" id="kwhPresets"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tiles" aria-label="Summary">
+    <div class="card tile" id="tileBest">
+      <span class="k">Cheapest to drive</span>
+      <span class="v"></span>
+      <span class="sub"></span>
+    </div>
+    <div class="card tile" id="tileWorst">
+      <span class="k">Priciest to drive</span>
+      <span class="v"></span>
+      <span class="sub"></span>
+    </div>
+    <div class="card tile" id="tileSpread">
+      <span class="k">Gap between them</span>
+      <span class="v"></span>
+      <span class="sub"></span>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <div class="controls">
+        <div class="ctl">
+          <label class="ctl-label" for="miles">Miles / year</label>
+          <input id="miles" class="miles-input" type="number" min="0" max="200000" step="500"
+                 value="12000" inputmode="numeric">
+        </div>
+        <div class="spacer"></div>
+        <div class="legend" id="legend" role="group" aria-label="Filter by fuel type">
+          <button class="chip" type="button" data-filter="ev" aria-pressed="true"><span class="swatch ev"></span>Electric</button>
+          <button class="chip" type="button" data-filter="gas" aria-pressed="true"><span class="swatch gas"></span>Gasoline</button>
+        </div>
+      </div>
+      <div class="colhead" aria-hidden="true">
+        <span>Vehicle</span><span>Cost per mile</span><span>&cent; / mi</span><span id="yrHead">$ / year</span>
+      </div>
+      <div class="chart" id="chart"></div>
+    </div>
+    <p class="hint" id="baselineHint">Click any vehicle to compare the rest against it.</p>
+  </section>
+
+  <section class="card adder" aria-label="Add your own car">
+    <div class="section-label">Add your car</div>
+    <div class="adder-fields">
+      <div class="field">
+        <label for="myName">Name</label>
+        <input id="myName" class="name-in" type="text" placeholder="e.g. My 2016 Golf" maxlength="40">
+      </div>
+      <div class="seg" id="mySeg" role="group" aria-label="Fuel type">
+        <button type="button" data-fuel="ev" aria-pressed="false">Electric</button>
+        <button type="button" data-fuel="gas" aria-pressed="true">Gas</button>
+      </div>
+      <div class="field">
+        <label for="myEff" id="myEffLabel">MPG</label>
+        <input id="myEff" class="eff-in" type="number" min="0.1" step="0.1" placeholder="32" inputmode="decimal">
+      </div>
+      <button class="btn" type="button" id="addBtn">Add to chart</button>
+    </div>
+    <div class="mine" id="mine"></div>
+  </section>
+
+  <footer>
+    <p><b>How the math works.</b> Gas: dollars per gallon &divide; MPG. Electric: dollars per kWh &divide; miles per kWh. Nothing else &mdash; this compares fuel only, not insurance, tires, maintenance, registration, or depreciation.</p>
+    <p><b>Where the ratings come from.</b> EPA combined city/highway figures pulled from <a href="https://www.fueleconomy.gov/feg/ws/" rel="noreferrer">fueleconomy.gov</a>; every vehicle keeps its EPA database ID so any number can be re-checked at the source. Model years span 2017&ndash;2027: current ratings where the EPA lists them, older years for vehicles no longer sold, and 2027 for one that is only just rated. EV efficiency is measured from the wall outlet, so the roughly 10&ndash;15% lost to charging is already subtracted. Every gas vehicle here is rated on regular unleaded, so one gas price applies to all of them.</p>
+    <p><b>One caveat on charging.</b> The price gap between charging at home overnight and pulling into a DC fast charger is bigger than the gap between any two cars on this chart. Try both presets.</p>
+  </footer>
+</div>
+
+<script src="src/data.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
