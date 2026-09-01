@@ -101,11 +101,13 @@ published only in Performance AWD trim).
 ## Layout
 
 ```
-index.html      markup
-styles.css      all styling; light and dark palettes as CSS custom properties
-src/data.js     vehicle table + fuel-price presets — the file to edit
-src/app.js      state, math, rendering, persistence
-tools/fetch-epa.py   EPA lookup helper for refreshing the data
+index.html             markup
+styles.css             all styling; light and dark palettes as custom properties
+src/data.js            vehicle table + fuel-price presets — the file to edit
+src/app.js             state, math, rendering, persistence
+og-card.png            1200×630 social preview image
+tools/fetch-epa.py     EPA lookup helper for refreshing the data
+tools/make-og-card.py  regenerates og-card.png (macOS: QuickLook + sips)
 ```
 
 ## Deploying to GitHub Pages
